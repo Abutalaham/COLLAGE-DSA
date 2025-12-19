@@ -20,26 +20,17 @@ int pop()
     return item;
 }
 
-int main()
-{
+int main(){
     printf("Enter a valid postfix expression:\n");
     scanf("%s", postfix);
-
-    for (i = 0; postfix[i] != '\0'; i++)
-    {
+    for (i = 0; postfix[i] != '\0'; i++){
         symb = postfix[i];
-
-        if (isdigit(symb))
-        {
+        if (isdigit(symb)){
             push(symb - '0');
-        }
-        else
-        {
+        }else{
             op2 = pop();
             op1 = pop();
-
-            switch (symb)
-            {
+            switch (symb){
                 case '+': push(op1 + op2); break;
                 case '-': push(op1 - op2); break;
                 case '*': push(op1 * op2); break;
@@ -51,7 +42,6 @@ int main()
             }
         }
     }
-
     res = pop();
     printf("\nResult = %d", res);
     return 0;
