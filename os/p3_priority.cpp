@@ -1,52 +1,49 @@
 #include <stdio.h>
 
-void swap(int *a, int *b) {
-    int temp = *a;
-    *a = *b;
-    *b = temp;
-}
-
 int main() {
-    int n;
-    printf("Enter Number of Processes: ");
+    int n, i, j, temp;
+    int bt[10], pr[10], pid[10];
+    int wt = 0, tat = 0, t = 0;
+
+    printf("Enter number of processes: ");
     scanf("%d", &n);
 
-    int b[n], p[n], index[n];
-
-    for (int i = 0; i < n; i++) {
-        printf("Enter Burst Time and Priority for Process %d: ", i + 1);
-        scanf("%d %d", &b[i], &p[i]);
-        index[i] = i + 1;
+    for (i = 0; i < n; i++) {
+        pid[i] = i + 1;
+        printf("Enter Burst Time & Priority of P%d: ", pid[i]);
+        scanf("%d %d", &bt[i], &pr[i]);
     }
 
-    for (int i = 0; i < n; i++) {
-        int max = p[i], pos = i;
-        for (int j = i; j < n; j++) {
-            if (p[j] > max) {
-                max = p[j];
-                pos = j;
+    /* Sort by Priority (Higher number = Higher priority) */
+    for (i = 0; i < n - 1; i++) {
+        for (j = i + 1; j < n; j++) {
+            if (pr[i] < pr[j]) {
+                temp = pr[i]; pr[i] = pr[j]; pr[j] = temp;
+                temp = bt[i]; bt[i] = bt[j]; bt[j] = temp;
+                temp = pid[i]; pid[i] = pid[j]; pid[j] = temp;
             }
         }
-        swap(&p[i], &p[pos]);
-        swap(&b[i], &b[pos]);
-        swap(&index[i], &index[pos]);
     }
 
-    int time = 0;
+    /* Printing scheduled process */
     printf("\nOrder of Process Execution:\n");
-    for (int i = 0; i < n; i++) {
-        printf("P%d executes from %d to %d\n", index[i], time, time + b[i]);
-        time += b[i];
+    for (i = 0; i < n; i++) {
+        printf("P%d is executed from %d to %d\n",
+               pid[i], t, t + bt[i]);
+        t += bt[i];
     }
 
-    printf("\nProcess ID\tBurst Time\tWaiting Time\tTurnaround Time\n");
-
-    int wt = 0;
-    for (int i = 0; i < n; i++) {
-        printf("P%d\t\t%d\t\t%d\t\t%d\n",
-               index[i], b[i], wt, wt + b[i]);
-        wt += b[i];
+    printf("\nPID\tBT\tWT\tTAT\n");
+    wt = 0;
+    for (i = 0; i < n; i++) {
+        printf("P%d\t%d\t%d\t%d\n",
+               pid[i], bt[i], wt, wt + bt[i]);
+        tat += wt + bt[i];
+        wt += bt[i];
     }
+
+    printf("\nAverage Waiting Time = %.2f", (float)(wt - tat + wt) / n);
+    printf("\nAverage Turnaround Time = %.2f\n", (float)tat / n);
 
     return 0;
 }

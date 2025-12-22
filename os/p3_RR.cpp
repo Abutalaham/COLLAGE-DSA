@@ -1,66 +1,56 @@
 #include <stdio.h>
 
-int main()
-{
-    int n;
-    printf("Enter Total Number of Processes: ");
+int main() {
+    int n, tq, i = 0, total = 0, done = 0;
+    int at[10], bt[10], rt[10];
+    float wt = 0, tat = 0;
+
+    printf("Enter number of processes: ");
     scanf("%d", &n);
 
-    int wait_time = 0, ta_time = 0;
-    int arr_time[n], burst_time[n], temp_burst_time[n];
-    int x = n;
-
-    for (int i = 0; i < n; i++) {
-        printf("Enter Arrival Time of Process %d: ", i + 1);
-        scanf("%d", &arr_time[i]);
-        printf("Enter Burst Time of Process %d: ", i + 1);
-        scanf("%d", &burst_time[i]);
-        temp_burst_time[i] = burst_time[i];
+    while (i < n) {
+        printf("Arrival Time P%d: ", i + 1);
+        scanf("%d", &at[i]);
+        printf("Burst Time P%d: ", i + 1);
+        scanf("%d", &bt[i]);
+        rt[i] = bt[i];
+        i++;
     }
 
-    int time_slot;
-    printf("Enter Time Slot: ");
-    scanf("%d", &time_slot);
+    printf("Enter Time Quantum: ");
+    scanf("%d", &tq);
 
-    int total = 0, counter = 0, i = 0;
+    printf("\nPID\tBT\tTAT\tWT\n");
 
-    printf("\nProcess ID\tBurst Time\tTurnaround Time\tWaiting Time\n");
+    while (!done) {
+        done = 1;
+        i = 0;
 
-    while (x != 0) {
+        while (i < n) {
+            if (rt[i] > 0) {
+                done = 0;
 
-        if (temp_burst_time[i] <= time_slot && temp_burst_time[i] > 0) {
-            total += temp_burst_time[i];
-            temp_burst_time[i] = 0;
-            counter = 1;
-        }
-        else if (temp_burst_time[i] > 0) {
-            temp_burst_time[i] -= time_slot;
-            total += time_slot;
-        }
+                if (rt[i] > tq) {
+                    total += tq;
+                    rt[i] -= tq;
+                } else {
+                    total += rt[i];
+                    printf("%d\t%d\t%d\t%d\n",
+                           i + 1, bt[i],
+                           total - at[i],
+                           total - at[i] - bt[i]);
 
-        if (temp_burst_time[i] == 0 && counter == 1) {
-            x--;
-            printf("%d\t\t%d\t\t%d\t\t%d\n",
-                   i + 1,
-                   burst_time[i],
-                   total - arr_time[i],
-                   total - arr_time[i] - burst_time[i]);
-
-            wait_time += total - arr_time[i] - burst_time[i];
-            ta_time += total - arr_time[i];
-            counter = 0;
-        }
-
-        if (i == n - 1)
-            i = 0;
-        else if (arr_time[i + 1] <= total)
+                    wt += total - at[i] - bt[i];
+                    tat += total - at[i];
+                    rt[i] = 0;
+                }
+            }
             i++;
-        else
-            i = 0;
+        }
     }
 
-    printf("\nAverage Waiting Time = %.2f", (float)wait_time / n);
-    printf("\nAverage Turnaround Time = %.2f\n", (float)ta_time / n);
+    printf("\nAverage Waiting Time = %.2f", wt / n);
+    printf("\nAverage Turnaround Time = %.2f\n", tat / n);
 
     return 0;
 }
